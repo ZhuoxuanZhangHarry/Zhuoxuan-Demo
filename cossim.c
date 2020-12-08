@@ -4,7 +4,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include "cossim.h"
-
+#include <limits.h>
+#define MAX_LENGTH 30
 //structure
 struct Node
 {
@@ -69,6 +70,7 @@ void lucky_free(struct Table *table)
     {
         tmp = n;
         n = n->next;
+        free(tmp->word);
         free(tmp);
     }
     free(table->head);
@@ -122,6 +124,7 @@ void shuffle(char *string, int whichfile, struct Table *a)
             add_to_front(0, 1, string, table);
         }
     }
+    
 }
 
 double calculator(struct Table *a)
@@ -142,30 +145,36 @@ double calculator(struct Table *a)
 
     result = numerator / denominator;
     result = result * 100;
+    if (result != result) //detect the NaN
+    {
+        result = 0;
+    }
     return result;
 }
 
-///body functions
+
 void readin(struct Table *a) //read and store elements into table
 {
     struct Table *table = a;
-    char *word1 = malloc(sizeof(char *)); //free
-    char *word2 = malloc(sizeof(char *)); //free
+    char *word1 = malloc(sizeof(char) * MAX_LENGTH); //free
+    char *word2 = malloc(sizeof(char) * MAX_LENGTH); //free
 
     FILE *fp1 = fopen("result1.txt", "r");
     while (fscanf(fp1, "%s", word1) != EOF)
     {
         shuffle(word1, 1, table);
-        word1 = malloc(sizeof(char *)); //free
+        word1 = malloc(sizeof(char) * MAX_LENGTH);
     }
+    free(word1);
     fclose(fp1);
 
     FILE *fp2 = fopen("result2.txt", "r");
     while (fscanf(fp2, "%s", word2) != EOF)
     {
         shuffle(word2, 2, table);
-        word2 = malloc(sizeof(char *)); //free
+        word2 = malloc(sizeof(char) * MAX_LENGTH);
     }
+    free(word2);
     fclose(fp2);
 }
 
@@ -173,7 +182,10 @@ void readin(struct Table *a) //read and store elements into table
 void cossim()
 {
     struct Table *table = create_table();
+
     readin(table);
+    //print_table(table);
     printf("The cosine similarity is: %.2f%%\n", calculator(table));
     lucky_free(table);
 }
+

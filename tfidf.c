@@ -5,6 +5,8 @@
 #define MAX_LENGTH 30
 
 /*using a trie can be faster to search but I am exhausted */
+/* what is the proportion of unimportant word should we cut? */
+/* Maybe combine cossim and tfidf later  (faster)*/
 
 struct Node
 {
@@ -82,49 +84,41 @@ void free_ll(struct linked_list *ll)
     free(ll);
 }
 
-//delete later
-void print_ll(struct linked_list *ll)
-{
-    struct Node *n = ll->head->next;
-
-    while (n != ll->tail)
-    {
-        printf("%s %d  tfvalue: %f  tfidfvalue: %f\n", n->word, n->count, n->tf, n->tf_idf);
-        n = n->next;
-    }
-}
-
-//delete later
 void temp_print(struct linked_list *ll1, struct linked_list *ll2)
 {
     struct Node *node1 = ll1->head->next;
     struct Node *node2 = ll2->head->next;
-
+    int size1 = ll1->size*0.75;
+    int size2 = ll2->size*0.75;
+    size1++;
+    size2++;
     FILE *fp1 = fopen("result1.txt", "w+");
-    while (node1 != ll1->tail)
+    while (size1> 0 && node1 != ll1->tail)
     {
-        if (node1->tf_idf < 0.25)
-        {
-            for (int i = 0; i < node1->count; i++)
-                fprintf(fp1, "%s ", node1->word);
-        }
 
+        for (int i = 0; i < node1->count; i++)
+        {
+            size1--;
+            fprintf(fp1, "%s ", node1->word);
+        }
         node1 = node1->next;
     }
     fclose(fp1);
-
+    
     FILE *fp2 = fopen("result2.txt", "w+");
-    while (node2 != ll2->tail)
+    while (size2 > 0 && node2 != ll2->tail)
     {
-        if (node2->tf_idf < 0.25)
+
+        for (int i = 0; i < node2->count; i++)
         {
-            for (int i = 0; i < node2->count; i++)
-                fprintf(fp1, "%s ", node2->word);
+            size2--;
+            fprintf(fp1, "%s ", node2->word);
         }
         node2 = node2->next;
     }
     fclose(fp2);
 }
+
 
 //body functions
 
@@ -297,32 +291,12 @@ void tfidf()
     struct linked_list *ll1 = create_ll();
     storager(ll1, "result1.txt");
     calctf(ll1);
-    //printf("The size is: %d\n", totalword(ll1));
-    //print_ll(ll1);
-
-   // printf("\n");
-
     struct linked_list *ll2 = create_ll();
     storager(ll2, "result2.txt");
     calctf(ll2);
-    //printf("The size is: %d\n", totalword(ll2));
-   // print_ll(ll2);
-
-    //printf("\n");
-
     calctfidf(ll1, ll2);
-   // print_ll(ll1);
-   // printf("\n");
-   // print_ll(ll2);
-
-   // printf("\n");
     bubbleSort(ll1);
-   // print_ll(ll1);
-   // printf("\n");
     bubbleSort(ll2);
-   // print_ll(ll2);
-
-    temp_print(ll1, ll2); //delete later
-    //free_ll(ll1); //error???
-    //free_ll(ll2); //error???
+    temp_print(ll1, ll2);
 }
+

@@ -6,6 +6,7 @@
 #include "cossim.h"
 #include <limits.h>
 #define MAX_LENGTH 30
+
 //structure
 struct Node
 {
@@ -185,7 +186,10 @@ void cossim()
 
     readin(table);
     //print_table(table);
-    printf("The cosine similarity is: %.2f%%\n", calculator(table));
+    printf("The similarity between these two files is: %.2f%%\n", calculator(table));
+    if (calculator(table) >= 80.000000) {
+    	printf("Plagiarism detected.\n");
+    }
     lucky_free(table);
 }
 

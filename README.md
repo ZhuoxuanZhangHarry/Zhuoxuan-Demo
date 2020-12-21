@@ -3,7 +3,7 @@ This depository is Zhuoxuan's code-works in the Plagiarism Checker project.
 
 This depository contains partial code of Plagiarism Checker project. But it still usable.
 
-If you are using clang, you could just make. 
+If you are using linux, you could just make. 
 
 Usage: ./plagiarism [file1] [file2]
 
